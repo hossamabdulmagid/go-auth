@@ -1,0 +1,8 @@
+.DS_Store
+.idea
+node_modules
+.firebase
+.env
+/mongo-data
+/base/logs/
+/base/node_modules/
