@@ -1,47 +1,40 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"log"
-	"time"
+	"os"
 
-	"go.mongodb.org/mongo-driver/mongo/options"
+	middleware "backend-go/middleware"
+	routes "backend-go/routes"
+
+	"github.com/gin-gonic/gin"
+
+	_ "github.com/heroku/x/hmetrics/onload"
 )
 
 func main() {
+	port := os.Getenv("PORT")
 
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://sawsawdb:13102001a@cluster0.qhjct.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"))
-
-	if err != nil {
-		log.Fatal(err)
+	if port == "" {
+		port = "8000"
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	router := gin.New()
+	router.Use(gin.Logger())
+	routes.UserRoutes(router)
 
-	err = client.Connect(ctx)
+	router.Use(middleware.Authentication())
 
-	if err != nil {
-		log.Fatal(err)
+	// API-2
+	router.GET("/api-1", func(c *gin.Context) {
 
-	}
+		c.JSON(200, gin.H{"success": "Access granted for api-1"})
 
-	defer client.Disconnect(ctx)
+	})
 
-	err = client.Ping(ctx, readpref.Primary())
+	// API-1
+	router.GET("/api-2", func(c *gin.Context) {
+		c.JSON(200, gin.H{"success": "Access granted for api-2"})
+	})
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	databases, err := client.ListDatabaseNames(ctx, bson.M{})
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(databases)
+	router.Run(":" + port)
 }
