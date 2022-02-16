@@ -18,6 +18,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/go-playground/validator/v10"
 )
 
 var userCollection *mongo.Collection = database.OpenCollection(database.Client, "user")
