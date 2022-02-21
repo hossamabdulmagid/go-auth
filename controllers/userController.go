@@ -72,7 +72,7 @@ func SignUp() gin.HandlerFunc {
 		defer cancel()
 		if err != nil {
 			log.Panic(err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while checking for the email"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occurred while checking for the email"})
 			return
 		}
 
